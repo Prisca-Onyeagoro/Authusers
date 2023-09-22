@@ -1,21 +1,46 @@
 'use client';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 export default function Signup() {
+  const router = useRouter();
   const [user, setUser] = React.useState({
     email: '',
     name: '',
     password: '',
     contact: '',
   });
+  const [buttonDisabled, setButtonDisabled] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const Onsignup = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.post('/api/users/register', user);
+      console.log('signup success', res.data);
+      router.push('/Login');
+    } catch (error) {
+      console.log('sign up failed', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const Onsignup = async () => {};
+  useEffect(() => {
+    if (
+      user.email.length > 0 &&
+      user.name.length > 0 &&
+      user.password.length > 0
+    ) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [user]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>Signup</h1>
+      <h1>{loading ? 'Processing.... wait :)' : 'Sign up'}</h1>
       <hr />
       <label htmlFor="NAME">NAME</label>
       <input
@@ -57,7 +82,7 @@ export default function Signup() {
         className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-900"
         onClick={Onsignup}
       >
-        Signup here
+        {buttonDisabled ? 'No signup' : 'Sign up'}
       </button>
       <Link href="/Login">Visit Login Page</Link>
     </div>
