@@ -26,12 +26,13 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  Otp: String,
   forgotPasswordToken: String,
   forgotPasswordTokenExpiry: Date,
   verifyToken: String,
   verifyTokenExpiry: Date,
 });
 
-const User = mongoose.models.users || mongoose.model('users', userSchema);
+const auth = mongoose.models.auth || mongoose.model('auth', userSchema);
 
-export default User;
+export default auth;

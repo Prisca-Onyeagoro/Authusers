@@ -1,5 +1,5 @@
 import { connect } from '@/dbConfig/dbConfig';
-import User from '@/models/Usermodel';
+import auth from '@/models/Usermodel';
 import { NextResponse } from 'next/server';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -14,7 +14,7 @@ export async function POST(request) {
       );
     }
 
-    const user = await User.findOne({ email });
+    const user = await auth.findOne({ email });
 
     if (!user) {
       return new NextResponse(

@@ -63,6 +63,7 @@ export default function Login() {
         {disableButton ? 'No Login' : 'Login here'}
       </button>
       <Link href="/register">Visit Signup Page</Link>
+      <Link href="/forgotpassword">Forgot password ? click here</Link>
     </div>
   );
 }
