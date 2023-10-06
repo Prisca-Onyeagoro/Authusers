@@ -1,5 +1,6 @@
 import generateRandomFig from '@/OTP';
 import { connect } from '@/dbConfig/dbConfig';
+import { sendEmail } from '@/helpers/mailers';
 import auth from '@/models/Usermodel';
 import { NextResponse } from 'next/server';
 
@@ -18,8 +19,8 @@ export async function POST(request) {
         })
       );
     }
-
-    // send the OTP to the user email
+    console.log(userexist);
+    await sendEmail({ email, emailType: 'RESET', userId: userexist._id });
 
     return new NextResponse(
       JSON.stringify({ message: 'success', status: 200 })

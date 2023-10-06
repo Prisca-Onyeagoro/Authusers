@@ -10,8 +10,8 @@ export async function POST(request) {
     console.log(token);
 
     const user = await auth.findOne({
-      forgotPasswordToken: token,
-      forgotPasswordTokenExpiry: { $gt: Date.now() },
+      verifyToken: token,
+      verifyTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -19,8 +19,8 @@ export async function POST(request) {
     }
 
     user.isVerified = true;
-    user.forgotPasswordToken = undefined;
-    user.forgotPasswordTokenExpiry = undefined;
+    user.verifyToken = undefined;
+    user.verifyTokenExpiry = undefined;
 
     await user.save();
 

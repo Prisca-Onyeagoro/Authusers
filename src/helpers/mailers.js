@@ -1,29 +1,53 @@
-import User from '@/models/Usermodel';
+import auth from '@/models/Usermodel';
 import bcryptjs from 'bcryptjs';
 import nodemailer from 'nodemailer';
 
-export const sendEmail = async ({ email }) => {
+export const sendEmail = async ({ email, emailType, userId }) => {
   try {
-    const transport = nodemailer.createTransport({
-      service: 'gmail',
+    // create a hashedtoken
+    const hashedtoken = await bcryptjs.hash(userId.toString(), 10);
+
+    if (emailType === 'VERIFY') {
+      await auth.findByIdAndUpdate(userId, {
+        verifyToken: hashedtoken,
+        verifyTokenExpiry: Date.now() + 36000000,
+      });
+    } else if (emailType === 'RESET') {
+      await auth.findByIdAndUpdate(userId, {
+        forgotPasswordToken: hashedtoken,
+        forgotPasswordTokenExpiry: Date.now() + 36000000,
+      });
+    }
+
+    var transport = nodemailer.createTransport({
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 2525,
       auth: {
-        user: 'priscaonyeagoro@gmail.com',
-        pass: process.env.GOOGLEAPP,
+        user: '9341a29a1333ee',
+        pass: 'd6000f56487a95',
       },
     });
 
     const mailOptions = {
       from: 'priscaonyeagoro@gmail.com',
-      to: 'priscaonyeagoro716@gmail.com',
-      subject: 'Reset Your password',
-      html: `<p>click <a href="${
-        process.env.DOMAIN
-      }/verifyemail?token=${hashedToken}">here</a> to ${'RESET YOUR PASSWORD'}</p>`,
+      to: email,
+      subject:
+        emailType === 'VERIFY' ? 'verify your email' : 'Reset your password',
+      html: `<p>${
+        emailType === 'VERIFY'
+          ? `click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedtoken}">here</a>`
+          : `click  <a href="${process.env.DOMAIN}/passwordreset?token=${hashedtoken}">here</a>`
+      }     to${
+        emailType === 'VERIFY' ? 'verify your email' : 'reset your password'
+      }  ${
+        emailType === 'VERIFY'
+          ? `copy and paste this link in your browser below ---->${process.env.DOMAIN}/verifyemail?token=${hashedtoken}`
+          : `copy and paste this link in your browser below ---->${process.env.DOMAIN}/passwordreset?token=${hashedtoken}`
+      }</p>`,
     };
 
-    const mailResponse = await transport.sendMail(mailOptions);
-
-    return mailResponse;
+    const mailresponse = await transport.sendMail(mailOptions);
+    return mailresponse;
   } catch (error) {
     throw new Error(error.message);
   }

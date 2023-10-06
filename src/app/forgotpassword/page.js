@@ -1,26 +1,37 @@
 'use client';
 import axios from 'axios';
+import { Truculenta } from 'next/font/google';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import React from 'react';
 
 const forgotpassword = () => {
+  const router = useRouter();
   const [user, setUser] = React.useState({
     email: '',
   });
-
+  const [isloading, setisLoading] = React.useState(false);
   const forgot = async () => {
     try {
-      const res = await axios.post('/api/users/forgotpass', user);
+      setisLoading(true);
+      const res = await axios.post('/api/users/resetpassword', user);
       console.log('success', res.data);
       alert('check your email for verification');
     } catch (error) {
-      console.log(error);
+      return new NextResponse({
+        message: 'server error ---->' + error.message,
+      });
+    } finally {
+      setisLoading(false);
     }
   };
   return (
     <main>
       <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        {/* <h1>{loading ? 'processing... kindly wait :)' : 'Login'} </h1> */}
+        <h1>
+          {isloading ? 'processing... kindly wait :)' : 'Forgot Password'}{' '}
+        </h1>
         <hr />
 
         <label htmlFor="Email">Enter your email address</label>
