@@ -1,4 +1,3 @@
-import generateRandomFig from '@/OTP';
 import { connect } from '@/dbConfig/dbConfig';
 import { sendEmail } from '@/helpers/mailers';
 import auth from '@/models/Usermodel';

@@ -1,4 +1,3 @@
-import Provider from '../../Components/Provider';
 import './globals.css';
 import { Inter } from 'next/font/google';
 import 'react-toastify/dist/ReactToastify.css';
