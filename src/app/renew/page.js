@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default function Renew() {
   const router = useRouter();
@@ -19,9 +20,22 @@ export default function Renew() {
       const res = await axios.post('/api/users/renew', user);
       console.log('login success', res.data);
       setUser({ ...user, email: '', password: '' });
-      router.push('/Login');
+      if (res.data.status === 400) {
+        toast.error(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
+
+      if (res.data.status !== 400) {
+        toast.success(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        router.push('/Login');
+      }
     } catch (error) {
-      console.log('login failed', error.message);
+      toast.error(`${res.data.message}`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } finally {
       setLoading(false);
     }

@@ -2,8 +2,9 @@
 
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { NextResponse } from 'next/server';
+
 import React, { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const passwordReset = () => {
   const router = useRouter();
@@ -12,11 +13,12 @@ const passwordReset = () => {
   const verifyToken = async () => {
     try {
       await axios.post('/api/users/verifytoken', { token });
+
       router.push('/renew');
     } catch (error) {
-      return new NextResponse(
-        JSON.stringify({ message: 'error occured --->' + error.message })
-      );
+      toast.error('Server Error', {
+        position: toast.POSITION.TOP_CENTER,
+      });
     }
   };
 
@@ -33,10 +35,11 @@ const passwordReset = () => {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-4xl">Verifying your identity</h1>
-      <h2 className="p-2 bg-orange-500 text-black">
-        {token ? `${token}` : 'no token'}
-      </h2>
+      <h1 className="text-4xl">Verifying your identity......</h1>
+
+      {toast.success('Verifying Your identity Wait......', {
+        position: toast.POSITION.TOP_CENTER,
+      })}
     </main>
   );
 };

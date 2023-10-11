@@ -7,7 +7,6 @@ export async function POST(request) {
 
   try {
     const { token } = await request.json();
-    console.log(token);
 
     const user = await auth.findOne({
       verifyToken: token,
@@ -15,7 +14,9 @@ export async function POST(request) {
     });
 
     if (!user) {
-      return new NextResponse(JSON.stringify({ message: 'invalid token' }));
+      return new NextResponse(
+        JSON.stringify({ message: 'invalid token', status: 'error' })
+      );
     }
 
     user.isVerified = true;
@@ -28,8 +29,6 @@ export async function POST(request) {
       JSON.stringify({ message: 'Successfully verified' })
     );
   } catch (error) {
-    return new NextResponse(
-      JSON.stringify({ message: 'server error ---->' + error.message })
-    );
+    return new NextResponse(JSON.stringify({ message: 'server error' }));
   }
 }

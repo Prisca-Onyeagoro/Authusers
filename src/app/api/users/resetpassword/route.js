@@ -15,20 +15,22 @@ export async function POST(request) {
       return new NextResponse(
         JSON.stringify({
           message: 'This email is not registered',
-          status: 404,
+          status: 400,
         })
       );
     }
-    console.log(userexist);
+
     await sendEmail({ email, emailType: 'RESET', userId: userexist._id });
 
     return new NextResponse(
-      JSON.stringify({ message: 'success', status: 200 })
+      JSON.stringify({
+        message: 'Check your email for verification',
+        status: 200,
+      })
     );
   } catch (error) {
-    console.log(error.message);
     return new NextResponse(
-      JSON.stringify({ message: 'error ----->' + error.message, status: 500 })
+      JSON.stringify({ message: 'server error', status: 400 })
     );
   }
 }

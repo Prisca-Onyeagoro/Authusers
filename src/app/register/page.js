@@ -3,6 +3,8 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Image from 'next/image';
+import { toast } from 'react-toastify';
 
 export default function Signup() {
   const router = useRouter();
@@ -18,10 +20,22 @@ export default function Signup() {
     try {
       setLoading(true);
       const res = await axios.post('/api/users/register', user);
-      console.log('signup success', res.data);
-      router.push('/Login');
+      if (res.data.status === 400) {
+        toast.error(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
+
+      if (res.data.status !== 400) {
+        toast.success(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        router.push('/Login');
+      }
     } catch (error) {
-      console.log('sign up failed', error.message);
+      toast.error(`${res.data.message}`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } finally {
       setLoading(false);
     }
@@ -38,10 +52,27 @@ export default function Signup() {
       setButtonDisabled(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (
+      user.email.length < 0 ||
+      user.name.length < 0 ||
+      user.password.length < 0
+    ) {
+      toast.error('fill the empty fields', {
+        position: toast.POSITION.TOP_CENTER,
+      });
+    }
+  }, [user]);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1>{loading ? 'Processing.... wait :)' : 'Sign up'}</h1>
-      <hr />
+    <main className="flex flex-col items-center w-full justify-center min-h-screen py-2 px-20">
+      {/*Register section    */}
+
+      <h1 className="text-yellow-50 font-extrabold text-lg ">
+        {loading ? 'Processing.... wait :)' : 'Sign up'}
+      </h1>
+
       <label htmlFor="NAME">NAME</label>
       <input
         className="p-2 border border-red-300 rounded-lg mb-4 focus:outline-none focus:border-red-900 text-black"
@@ -84,7 +115,6 @@ export default function Signup() {
       >
         {buttonDisabled ? 'No signup' : 'Sign up'}
       </button>
-      <Link href="/Login">Visit Login Page</Link>
-    </div>
+    </main>
   );
 }

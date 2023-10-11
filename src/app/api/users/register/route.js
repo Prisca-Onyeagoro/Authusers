@@ -33,17 +33,16 @@ export async function POST(request) {
       password: hashedpassword,
     });
     const savedUser = await newUser.save();
-    console.log;
 
     await sendEmail({ email, emailType: 'VERIFY', userId: savedUser._id });
     return NextResponse.json(
-      { message: 'user successfully created', savedUser },
+      { message: 'Success', savedUser },
       { status: 201 }
     );
   } catch (error) {
     console.log(error);
     return new NextResponse(
-      JSON.stringify({ message: error.message, status: 500 })
+      JSON.stringify({ message: 'server error', status: 400 })
     );
   }
 }

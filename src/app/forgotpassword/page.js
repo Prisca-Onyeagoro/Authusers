@@ -1,10 +1,10 @@
 'use client';
 import axios from 'axios';
-import { Truculenta } from 'next/font/google';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { NextResponse } from 'next/server';
 import React from 'react';
+import { toast } from 'react-toastify';
 
 const forgotpassword = () => {
   const router = useRouter();
@@ -17,10 +17,21 @@ const forgotpassword = () => {
       setisLoading(true);
       const res = await axios.post('/api/users/resetpassword', user);
       console.log('success', res.data);
-      alert('check your email for verification');
+
+      if (res.data.status == 400) {
+        toast.error(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
+
+      if (res.data.status !== 400) {
+        toast.success(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
     } catch (error) {
-      return new NextResponse({
-        message: 'server error ---->' + error.message,
+      toast.error('Server Error', {
+        position: toast.POSITION.TOP_CENTER,
       });
     } finally {
       setisLoading(false);

@@ -10,7 +10,7 @@ export async function POST(request) {
     const { email, password } = await request.json();
     if (!email || !password) {
       return new NextResponse(
-        JSON.stringify({ message: 'field is empty' }, { status: 400 })
+        JSON.stringify({ message: 'field is empty', status: 400 })
       );
     }
 
@@ -18,10 +18,10 @@ export async function POST(request) {
 
     if (!user) {
       return new NextResponse(
-        JSON.stringify(
-          { message: 'user not found use the signup link' },
-          { status: 400 }
-        )
+        JSON.stringify({
+          message: 'user not found use the signup link',
+          status: 400,
+        })
       );
     }
 
@@ -29,12 +29,10 @@ export async function POST(request) {
 
     if (!passwordCorrect) {
       return new NextResponse(
-        JSON.stringify(
-          {
-            message: 'Incorrect password or email try and login again',
-          },
-          { status: 400 }
-        )
+        JSON.stringify({
+          message: 'Incorrect password or email try and login again',
+          status: 400,
+        })
       );
     }
 
@@ -49,13 +47,13 @@ export async function POST(request) {
       expiresIn: '1d',
     });
     const response = new NextResponse(
-      JSON.stringify({ message: 'login successfully', success: true })
+      JSON.stringify({ message: 'Login successfull', success: true })
     );
     response.cookies.set('token', token, { httpOnly: true });
     return response;
   } catch (error) {
     return new NextResponse(
-      JSON.stringify({ message: error.message, status: 500 })
+      JSON.stringify({ message: 'server error', status: 400 })
     );
   }
 }

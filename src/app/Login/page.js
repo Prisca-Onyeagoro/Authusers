@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const router = useRouter();
@@ -17,14 +18,28 @@ export default function Login() {
     try {
       setLoading(true);
       const res = await axios.post('/api/users/login', user);
-      console.log('login success', res.data);
-      router.push('/profile');
+
+      if (res.data.status === 400) {
+        toast.error(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+      }
+
+      if (res.data.status !== 400) {
+        toast.success(`${res.data.message}`, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        router.push('/profile');
+      }
     } catch (error) {
-      console.log('login failed', error.message);
+      toast.error(`${res.data.message}`, {
+        position: toast.POSITION.TOP_CENTER,
+      });
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (user.email.length > 0 && user.password.length > 0) {
       setdisableButton(false);
